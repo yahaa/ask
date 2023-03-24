@@ -33,7 +33,18 @@ Flags:
 
 
 $ ask "Are you here?"
-Yes, I am here. How may I assist you?
+Q: Are you here?
+A: Yes, I am here. How can I assist you?
+
+
+$ ask "Are you here?" -t zh
+Q: Please help me translate this sentence 'Are you here?' to zh
+A: 你在这里吗？(nǐ zài zhèlǐ ma?)
+
+$ ask "Are you here?" -p
+Q: Please help me polish this sentence 'Are you here?'
+A: Is it safe to assume that you are present in this location?
+
 ```
 
 ## Help?
