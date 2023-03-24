@@ -16,6 +16,7 @@ var (
 	apiKey    string
 	translate string
 	polish    bool
+	debug     bool
 )
 
 var rootCmd = &cobra.Command{
@@ -42,7 +43,9 @@ $ ask "Ask is a command line tool for ChatGPT that allows you to ask any questio
 			q = fmt.Sprintf("Please help me polish this sentence '%s'", q)
 		}
 
-		fmt.Printf("Q: %s\n", q)
+		if debug {
+			fmt.Printf("Q: %s\n", q)
+		}
 
 		client := openai.NewClient(apiKey)
 
@@ -63,7 +66,10 @@ $ ask "Ask is a command line tool for ChatGPT that allows you to ask any questio
 		}
 		defer stream.Close()
 
-		fmt.Print("A: ")
+		if debug {
+			fmt.Print("A: ")
+		}
+
 		for {
 			resp, err := stream.Recv()
 			if errors.Is(err, io.EOF) {
@@ -83,6 +89,7 @@ $ ask "Ask is a command line tool for ChatGPT that allows you to ask any questio
 }
 
 func init() {
+	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", false, "debug mode")
 	rootCmd.PersistentFlags().BoolVarP(&polish, "polish", "p", false, "polishing sentence")
 	rootCmd.PersistentFlags().StringVarP(&apiKey, "api-key", "k", os.Getenv("API_KEY"), "openai api key")
 	rootCmd.PersistentFlags().StringVarP(&translate, "translate", "t", "", "translate to specify language")
