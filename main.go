@@ -3,80 +3,94 @@ package main
 import (
 	"context"
 	"errors"
-	"flag"
 	"fmt"
 	"io"
 	"log"
 	"os"
 
 	"github.com/sashabaranov/go-openai"
+	"github.com/spf13/cobra"
 )
 
 var (
-	apiKey string
-	help   bool
+	apiKey    string
+	translate string
+	polish    bool
 )
 
-var helpMsg = `
-Ask is a command line tool for ChatGPT that allows you to ask any question.
+var rootCmd = &cobra.Command{
+	Use:   "ask",
+	Short: "Ask is a command line tool for ChatGPT that allows you to ask any question",
+	Long: `Ask is a command line tool for ChatGPT that allows you to ask any question.
 
-Usage:
+Examples:
+
 $ ask "help write a hello world demo using golang"
-`
+$ ask "Ask is a command line tool for ChatGPT that allows you to ask any question." -t zh
+$ ask "Ask is a command line tool for ChatGPT that allows you to ask any question." -p
+`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) <= 0 {
+			log.Fatalf("args need to specify")
+		}
+
+		q := args[0]
+
+		if len(translate) > 0 {
+			q = fmt.Sprintf("Please help me translate this sentence '%s' to %s", q, translate)
+		} else if polish {
+			q = fmt.Sprintf("Please help me polish this sentence '%s'", q)
+		}
+
+		fmt.Printf("Q: %s\n", q)
+
+		client := openai.NewClient(apiKey)
+
+		req := openai.ChatCompletionRequest{
+			Model: openai.GPT3Dot5Turbo,
+			Messages: []openai.ChatCompletionMessage{
+				{
+					Role:    openai.ChatMessageRoleUser,
+					Content: q,
+				},
+			},
+			Stream: true,
+		}
+		stream, err := client.CreateChatCompletionStream(context.TODO(), req)
+		if err != nil {
+			log.Printf("ChatCompletionStream error: %v", err)
+			os.Exit(1)
+		}
+		defer stream.Close()
+
+		fmt.Print("A: ")
+		for {
+			resp, err := stream.Recv()
+			if errors.Is(err, io.EOF) {
+				break
+			}
+
+			if err != nil {
+				log.Printf("stream response err: %v", err)
+				return
+			}
+
+			fmt.Print(resp.Choices[0].Delta.Content)
+		}
+
+		fmt.Println()
+	},
+}
 
 func init() {
-	flag.BoolVar(&help, "help", false, "help")
-	flag.StringVar(&apiKey, "api-key", os.Getenv("API_KEY"), "openai api key")
-	flag.Parse()
+	rootCmd.PersistentFlags().BoolVarP(&polish, "polish", "p", false, "polishing sentence")
+	rootCmd.PersistentFlags().StringVarP(&apiKey, "api-key", "k", os.Getenv("API_KEY"), "openai api key")
+	rootCmd.PersistentFlags().StringVarP(&translate, "translate", "t", "", "translate to specify language")
 }
 
 func main() {
-	if help {
-		fmt.Print(helpMsg)
-		os.Exit(0)
-	}
-
-	if len(os.Args) <= 1 {
-		log.Fatalf("args need to specify")
-	}
-
-	args := os.Args[1]
-
-	fmt.Printf("Q: %s\n", args)
-
-	client := openai.NewClient(apiKey)
-
-	req := openai.ChatCompletionRequest{
-		Model: openai.GPT3Dot5Turbo,
-		Messages: []openai.ChatCompletionMessage{
-			{
-				Role:    openai.ChatMessageRoleUser,
-				Content: args,
-			},
-		},
-		Stream: true,
-	}
-	stream, err := client.CreateChatCompletionStream(context.TODO(), req)
-	if err != nil {
-		log.Printf("ChatCompletionStream error: %v", err)
+	if err := rootCmd.Execute(); err != nil {
+		log.Printf("run err: %v", err)
 		os.Exit(1)
 	}
-	defer stream.Close()
-
-	fmt.Print("A: ")
-	for {
-		resp, err := stream.Recv()
-		if errors.Is(err, io.EOF) {
-			break
-		}
-
-		if err != nil {
-			log.Printf("stream response err: %v", err)
-			return
-		}
-
-		fmt.Print(resp.Choices[0].Delta.Content)
-	}
-
-	fmt.Println()
 }
