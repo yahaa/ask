@@ -17,3 +17,7 @@ $ export API_KEY="your openai api key"
 $ ask "Are you here?"
 Yes, I am here. How may I assist you?
 ```
+## Help?
+
+* You can get OpenAI `API_KEY` from here https://platform.openai.com/account/api-keys 
+* If you do not have an OpenAI account, simply sign up for one and visit https://sms-activate.org/ to receive assistance.

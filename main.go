@@ -6,10 +6,10 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"log"
 	"os"
 
 	"github.com/sashabaranov/go-openai"
-	"k8s.io/klog"
 )
 
 var (
@@ -32,12 +32,12 @@ func init() {
 
 func main() {
 	if help {
-		fmt.Println(helpMsg)
+		fmt.Print(helpMsg)
 		os.Exit(0)
 	}
 
 	if len(os.Args) <= 1 {
-		klog.Fatalf("args need to specify")
+		log.Fatalf("args need to specify")
 	}
 
 	args := os.Args[1]
@@ -58,7 +58,7 @@ func main() {
 	}
 	stream, err := client.CreateChatCompletionStream(context.TODO(), req)
 	if err != nil {
-		klog.Errorf("ChatCompletionStream error: %v", err)
+		log.Printf("ChatCompletionStream error: %v", err)
 		os.Exit(1)
 	}
 	defer stream.Close()
@@ -71,7 +71,7 @@ func main() {
 		}
 
 		if err != nil {
-			klog.Errorf("stream response err: %v", err)
+			log.Printf("stream response err: %v", err)
 			return
 		}
 
