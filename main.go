@@ -17,6 +17,7 @@ var (
 	translate string
 	polish    bool
 	debug     bool
+	check     bool
 )
 
 var rootCmd = &cobra.Command{
@@ -29,6 +30,7 @@ Examples:
 $ ask "help write a hello world demo using golang"
 $ ask "Ask is a command line tool for ChatGPT that allows you to ask any question." -t zh
 $ ask "Ask is a command line tool for ChatGPT that allows you to ask any question." -p
+$ ask "Ask is a command line tool for ChatGPT that allows you to ask any question." -c
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) <= 0 {
@@ -38,9 +40,11 @@ $ ask "Ask is a command line tool for ChatGPT that allows you to ask any questio
 		q := args[0]
 
 		if len(translate) > 0 {
-			q = fmt.Sprintf("Please help me translate this sentence '%s' to %s", q, translate)
+			q = fmt.Sprintf("Could you please help me translate this sentence '%s' to %s", q, translate)
 		} else if polish {
-			q = fmt.Sprintf("Please help me polish this sentence '%s'", q)
+			q = fmt.Sprintf("Could you please help me polish this sentence '%s'", q)
+		} else if check {
+			q = fmt.Sprintf("Could you please assist me in reviewing the grammar and spelling of the sentence '%s', and identify any existing errors within it?", q)
 		}
 
 		if debug {
@@ -89,8 +93,9 @@ $ ask "Ask is a command line tool for ChatGPT that allows you to ask any questio
 }
 
 func init() {
-	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", false, "debug mode")
-	rootCmd.PersistentFlags().BoolVarP(&polish, "polish", "p", false, "polishing sentence")
+	rootCmd.PersistentFlags().BoolVarP(&check, "check", "c", false, "enable check grammar")
+	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", false, "enable debug mode")
+	rootCmd.PersistentFlags().BoolVarP(&polish, "polish", "p", false, "enable polish sentence")
 	rootCmd.PersistentFlags().StringVarP(&apiKey, "api-key", "k", os.Getenv("API_KEY"), "openai api key")
 	rootCmd.PersistentFlags().StringVarP(&translate, "translate", "t", "", "translate to specify language")
 }
