@@ -6,7 +6,7 @@ go 1.18+
 
 ## install
 ```go
-$ go install github.com/yahaa/ask@latest
+$ go install github.com/yahaa/ask@v0.1.0
 
 ```
 ## Usage
