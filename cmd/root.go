@@ -101,7 +101,7 @@ $ ask "Ask is a command line tool for ChatGPT that allows you to ask any questio
 			respBuffer.WriteString(resp.Choices[0].Delta.Content)
 		}
 
-		conver := kvdb.SaveParmas{
+		sp := kvdb.SaveParmas{
 			Bucket: opt.Session,
 			ChatContext: kvdb.ChatContext{
 				Time: time.Now(),
@@ -118,7 +118,7 @@ $ ask "Ask is a command line tool for ChatGPT that allows you to ask any questio
 			},
 		}
 
-		if err := kv.Save(conver); err != nil {
+		if err := kv.Save(sp); err != nil {
 			log.Fatalf("kvdb save context err: %v", err)
 		}
 
@@ -134,7 +134,7 @@ func makeChatReq(ask string, chatCtxs []kvdb.ChatContext) (*openai.ChatCompletio
 		},
 	}
 
-	// append limit histry conversation context
+	// append limit history conversation context
 	for _, item := range chatCtxs {
 		messages = append(messages, item.Messages...)
 	}
