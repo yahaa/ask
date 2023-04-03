@@ -14,7 +14,7 @@ Ask is a command line tool for ChatGPT that allows you to ask any question.
 - [x] Support for English grammar/spelling error detection
 - [x] Support for creating new sessions
 
->>> ask will not record any user data to the cloud. All data will only be saved in the `$HOME/.ask/`.
+> ask will not record any user data to the cloud. All data will only be saved in the `$HOME/.ask/`.
 
 ## golang version
 go 1.18+
