@@ -101,7 +101,11 @@ func (c *kvImpl) Query(p QueryParams) (result []ChatContext) {
 		min := []byte(p.From.Format(time.RFC3339))
 		max := []byte(p.To.Format(time.RFC3339))
 
-		for k, v := cur.Seek(min); k != nil && bytes.Compare(k, max) <= 0 && p.Limit > 0; k, v = cur.Next() {
+		for k, v := cur.Last(); k != nil && bytes.Compare(k, min) >= 0 && p.Limit > 0; k, v = cur.Prev() {
+			if bytes.Compare(k, max) > 0 {
+				continue
+			}
+
 			key, err := time.Parse(time.RFC3339, string(k))
 			if err != nil {
 				continue
