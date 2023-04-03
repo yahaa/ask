@@ -1,36 +1,34 @@
 # ask
 [README](README.md) | [中文文档](README_zh.md)
 
-Ask is a command line tool for ChatGPT that allows you to ask any question.
+ask 是 ChatGPT 的一个命令行工具，它允许你在命令行向 ChatGPT 问任何问题.
 
+## 功能清单
+- [x] 命令行直接向 ChatGPT 提问，避免每次打开浏览器都需要认证是不是人类。
+- [x] 支持会话上下文推断
+- [x] 支持查看历史记录
+- [x] 支持语句翻译
+- [x] 支持文本润色
+- [x] 支持英语语法/拼写错误检测
+- [x] 支持新建会话
 
-## Feature list
+>>> ask 不会记录用户任何数据到云端，所有数据只会保存在 `$HOME/.ask/` 目录下。
 
-- [x] Directly ask ChatGPT in the command line, avoiding the need to authenticate as a human every time you open your browser.
-- [x] Support for inferring session context
-- [x] Support for viewing history records
-- [x] Support for sentence translation
-- [x] Support for text enhancement
-- [x] Support for English grammar/spelling error detection
-- [x] Support for creating new sessions
-
->>> ask will not record any user data to the cloud. All data will only be saved in the `$HOME/.ask/`.
-
-## golang version
+## golang 版本
 go 1.18+
 
-## install
-```bash
-go install github.com/yahaa/ask@latest
+## 安装
+```go
+$ go install github.com/yahaa/ask@latest
 ```
-## Usage
+## 使用演示
 
-Setup env:
+设置 API_KEY 环境变量:
 ```bash
 export API_KEY="your openai api key"
 ```
 
-Run help to see more features:
+查看帮助信息:
 ```bash
 ask -h 
 ```
@@ -64,7 +62,7 @@ Flags:
 
 
 
-Ask with `--debug(-d)` flag:
+使用 `--debug(-d)` 参数:
 ```bash
 ask "Are you here?" -d
 ```
@@ -74,7 +72,7 @@ A: Yes, I am here. How can I assist you?
   ```
 
 
-Translate sentence:
+翻译句子:
 ```bash
 ask "Are you here?" -t zh -d
 ```
@@ -82,7 +80,7 @@ ask "Are you here?" -t zh -d
 Q: Please help me translate this sentence 'Are you here?' to zh
 A: 你在这里吗？(nǐ zài zhèlǐ ma?)
   ```
-Polish your sentence:
+ 润色句子:
 ```bash
 ask "Are you here?" -p -d
 ```
@@ -91,7 +89,7 @@ Q: Please help me polish this sentence 'Are you here?'
 A: Is it safe to assume that you are present in this location?
 ```
 
-Check grammar or spelling:
+语法拼写检测:
 ```bash
 ask "Ask is a command line tool for ChatGPT that allows you to ask any question." -c
 ```
@@ -99,7 +97,7 @@ ask "Ask is a command line tool for ChatGPT that allows you to ask any question.
 The sentence appears to be grammatically correct and there are no spelling errors. However, there is a minor issue with clarity in using "Ask" as a proper noun. It may be more clear to write "The 'Ask' tool is a command line tool for ChatGPT that allows you to ask any question."
   ```
 
-Print ask history:
+打印提问历史:
 ```bash
 ask --history
 ```
@@ -123,7 +121,7 @@ Keep in mind that OpenAI's API is a powerful tool, but it's still an artificial 
 Print latest 1 questions were asked to ChatGPT, In the default session.
 
 ```
-Ask with new session:
+创建新会话:
 ```bash
 ask "How to learn kernel develop?" -n kernel
 ```
@@ -146,7 +144,7 @@ Here are some steps to guide you in learning kernel development:
 
 With patience, determination, and a lot of practice, you can become an accomplished kernel developer.
 ```
-Print all sessions:
+打印所有会话:
 ```bash
 ask --list
 ```
@@ -157,9 +155,9 @@ kernel
 A total of 2 chat sessions were requested from ChatGPT.
 ```
 
-## Help?
+## 其他帮助?
 
 
-* For more features, please run `ask -h` to view additional information. 
-* You can get OpenAI `API_KEY` from here https://platform.openai.com/account/api-keys 
-* If you do not have an OpenAI account, simply sign up for one and visit https://sms-activate.org/ to receive assistance.
+* 更多功能请执行 `ask -h` 查看。
+* 可以从 https://platform.openai.com/account/api-keys 获取你的 API_KEYS。
+* 如果你没有账号，可以按照 chat GPT 提示主持一个账号，注册账号过程中需要提供手机号码和短信验证，你可以从这个网站获取一些帮助 https://sms-activate.org/ to receive assistance。
