@@ -6,6 +6,7 @@ import (
 )
 
 type Option struct {
+	Model          string
 	APIKey         string
 	Translate      string
 	Polish         bool

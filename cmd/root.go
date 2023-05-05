@@ -32,6 +32,10 @@ $ ask "Ask is a command line tool for ChatGPT that allows you to ask any questio
 $ ask "Ask is a command line tool for ChatGPT that allows you to ask any question." -c
 `,
 	Run: func(cmd *cobra.Command, args []string) {
+		if opt.Model == "" {
+			opt.Model = openai.GPT3Dot5Turbo
+		}
+
 		kv, err := kvdb.New(opt.DBPath())
 		if err != nil {
 			log.Fatalf("new kvdb err: %v", err)
@@ -69,7 +73,7 @@ $ ask "Ask is a command line tool for ChatGPT that allows you to ask any questio
 
 		client := openai.NewClient(opt.APIKey)
 
-		req, err := makeChatReq(q, kv.Query(kvdb.QueryParams{Bucket: opt.Session}))
+		req, err := makeChatReq(q, kv.Query(kvdb.QueryParams{Bucket: opt.Session}), opt)
 		if err != nil {
 			log.Fatalf("make chat error: %v", err)
 		}
@@ -126,7 +130,7 @@ $ ask "Ask is a command line tool for ChatGPT that allows you to ask any questio
 	},
 }
 
-func makeChatReq(ask string, chatCtxs []kvdb.ChatContext) (*openai.ChatCompletionRequest, error) {
+func makeChatReq(ask string, chatCtxs []kvdb.ChatContext, opt Option) (*openai.ChatCompletionRequest, error) {
 	messages := []openai.ChatCompletionMessage{
 		{
 			Role:    openai.ChatMessageRoleSystem,
@@ -145,7 +149,7 @@ func makeChatReq(ask string, chatCtxs []kvdb.ChatContext) (*openai.ChatCompletio
 	})
 
 	req := openai.ChatCompletionRequest{
-		Model:    openai.GPT3Dot5Turbo,
+		Model:    opt.Model,
 		Messages: messages,
 		Stream:   true,
 	}
@@ -197,6 +201,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&opt.ConfigSavePath, "config", "f", fmt.Sprintf("%v/.ask", curUser.HomeDir), "config save path")
 	rootCmd.PersistentFlags().StringVarP(&opt.Session, "session", "n", "default", "new conversation session")
 	rootCmd.PersistentFlags().IntVarP(&opt.Limit, "limit", "l", 3, "limit the number of conversation history output")
+	rootCmd.PersistentFlags().StringVarP(&opt.Model, "model", "m", os.Getenv("MODEL"), "openai model, using 'gpt-3.5-turbo' if not specified")
 }
 
 func Execute() error {

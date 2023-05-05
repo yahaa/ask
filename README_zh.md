@@ -28,6 +28,12 @@ $ go install github.com/yahaa/ask@latest
 export API_KEY="your openai api key"
 ```
 
+设置 MODEL 环境变量(如果你的账号支持 'gpt-4',不设置将使用 'gpt-3.5-trubo'):
+```bash
+export MODEL="gpt-4"
+```
+
+
 查看帮助信息:
 ```bash
 ask -h 
@@ -54,6 +60,7 @@ Flags:
       --history            print the history of ask
   -l, --limit int          limit the number of conversation history output (default 3)
       --list               print the list of sessions
+  -m, --model string       openai model, using 'gpt-3.5-turbo' if not specified (default "gpt-4")
   -p, --polish             enable polish sentence
   -n, --session string     new conversation session (default "default")
   -t, --translate string   translate to specify language
