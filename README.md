@@ -25,9 +25,14 @@ go install github.com/yahaa/ask@latest
 ```
 ## Usage
 
-Setup env:
+Setup API_KEY env:
 ```bash
 export API_KEY="your openai api key"
+```
+
+Setup MODEL env(if it is supported by your account, otherwise using gpt-3.5-trubo as default):
+```bash
+export MODEL="gpt-4"
 ```
 
 Run help to see more features:
@@ -56,6 +61,7 @@ Flags:
       --history            print the history of ask
   -l, --limit int          limit the number of conversation history output (default 3)
       --list               print the list of sessions
+  -m, --model string       openai model, using 'gpt-3.5-turbo' if not specified (default "gpt-4")
   -p, --polish             enable polish sentence
   -n, --session string     new conversation session (default "default")
   -t, --translate string   translate to specify language
